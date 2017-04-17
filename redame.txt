@@ -1,0 +1,12 @@
+
+Feature v2
+Tratamento do request
+Envio do dados recebidos da request para firebase
+
+
+
+Feature v1
+Wifi conect
+Socket server
+Send dados para firebase 
+Json formatado 
