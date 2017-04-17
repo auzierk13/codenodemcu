@@ -1,11 +1,3 @@
-/*
- *  This sketch demonstrates how to set up a simple HTTP-like server.
- *  The server will set a GPIO pin depending on the request
- *    http://server_ip/gpio/0 will set the GPIO2 low,
- *    http://server_ip/gpio/1 will set the GPIO2 high
- *  server_ip is the IP address of the ESP8266 module, will be 
- *  printed to Serial when the module is connected.
- */
 
 
 String req; //Request http
@@ -49,8 +41,12 @@ void wifiClientSockets(){
   while(!client.available()){
     delay(1);
   }
-    
-  int resp= treatmentRequest();
+  
+  StaticJsonBuffer<300> jsonBufferNoSensor;
+  JsonObject& noSensor = jsonBufferNoSensor.createObject();
+  
+  
+  int resp= treatmentRequest(noSensor);
     if(resp ==-1){return;} //Tratamento de request invalida
 
   // Set GPIO2 according to the request
@@ -58,10 +54,10 @@ void wifiClientSockets(){
   
   client.flush();
 
-  treatmentResponse(resp); //Trata a reposta
+  treatmentResponse(resp,noSensor); //Trata a reposta
 }
  
-int treatmentRequest(){
+int treatmentRequest(JsonObject& noSensor){
 
    // Read the first line of the request
     req = client.readStringUntil('\r');
@@ -106,20 +102,79 @@ int treatmentRequest(){
 
   /////Captura de variaveis
   Serial.println("\n\n"); 
-  Serial.println("Captacao de variavel "+ req); //imprimindo a string1   
+  Serial.println("Captacao de variavel "+ req); //imprimindo a string1
 
-    noSensor.bpm= getValue().toInt();
-    noSensor.mensagem= getValue();
-    noSensor.statusAlerta= getValue();
-    noSensor.temperatuera = getValue().toFloat(); //Float
-    Serial.print("temperatuera "); //Mostra chave e valor
-    Serial.println(noSensor.temperatuera); //Mostra chave e valor
-    noSensor.tipoalerta= getValue().toInt();
-    noSensor.umidadade= getValue().toInt();
+    noSensor["batimento"]= getValue().toInt();
+    noSensor["tipoAlerta1"]= getValue().toInt();
+    noSensor["mensagem1"]= getValue();
 
+ 
+    noSensor["temperatura"] = getValue().toFloat(); //Float
+    noSensor["tipoAlerta2"]= getValue().toInt();
+    noSensor["mensagem2"]= getValue();
+
+    dateTime=getValue();
+    
+    Serial.println("Begin to format");
+    Serial.println(dateTime);
    
+    noSensor["ano"]= getDate('-').toInt();
+    noSensor["mes"]= getDate('-').toInt();
+    noSensor["dia"]= getDate('-').toInt();
+    noSensor["hora"]= getDate(':').toInt();
+    noSensor["minuto"]= getDate(':').toInt();
+    noSensor["segundo"]= getDate(':').toInt();;    
+
+    Serial.println("End to format");
+    
+    
+ 
+ 
+    noSensor["umidade"]= getValue().toInt();
+    noSensor["tipoAlerta3"]= getValue().toInt();
+    noSensor["mensagem3"]= getValue();
+   
+   // Check erro na request
+   int bpm = noSensor["batimento"];
+   int temp =noSensor["temperatura"];
+   int umi =noSensor["umidade"];
+   
+ if(bpm==0 & temp==0 & umi==0){
+     Serial.println(F("Batimento"));
+     Serial.println(bpm);
+     Serial.println(F("Temperatura"));
+     Serial.println(temp);
+     Serial.println(F("Umidade"));
+     Serial.println(umi);
+     
+     Serial.println(F("invalid request"));
+       client.stop();
+       resp=-1;
+    }
      return resp;
 }
+
+
+  String getDate(char separador)
+{
+  int indexdate = dateTime.indexOf(separador);
+  String date = dateTime.substring(0, indexdate);
+   
+  if (dateTime.startsWith(date + separador)) { //Verifica se estar no fim
+    dateTime.replace(date + separador, "");
+  } else {
+    dateTime.replace(date + separador  + "/", "");
+ 
+    }
+
+  Serial.println("getDate>> ");
+  Serial.println(date ); //Mostra date e valor
+  Serial.println("dateTime: " + dateTime);
+  Serial.println("getDate<<\n\n");
+
+  return date;
+}
+
 String getValue()
 {
   int indexchave= req.indexOf('&');
@@ -139,7 +194,7 @@ String getValue()
   return valor;
 }
 
-void treatmentResponse(int resp){
+void treatmentResponse(int resp, JsonObject& noSensor){
   // Prepare the response
   String httpRes = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n<!DOCTYPE HTML>\r\n<html>\r\nGPIO is now ";
   httpRes += (resp)?"high":"low";
@@ -152,6 +207,6 @@ void treatmentResponse(int resp){
   // The client will actually be disconnected 
   // when the function returns and 'client' object is detroyed  
 
-  sendFirebaseDatabase();
+  sendFirebaseDatabase(noSensor);
 }
   

@@ -1,11 +1,14 @@
 
-Feature v2
+Feature 
+
+Last Feature 
+Melhora no uso da memória RAM
+Media da temperatura
+Media da Umidade 
+Multiplos alertas
+Enviando json para firebase
 Tratamento do request
 Envio do dados recebidos da request para firebase
-
-
-
-Feature v1
 Wifi conect
 Socket server
 Send dados para firebase 
