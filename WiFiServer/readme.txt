@@ -2,7 +2,8 @@
 Feature 
 
 Last Feature 
-Melhora no uso da memÃ³ria RAM
+Melhorando tratamento de mensagem de erro
+Melhora no uso da memória RAM
 Media da temperatura
 Media da Umidade 
 Multiplos alertas
