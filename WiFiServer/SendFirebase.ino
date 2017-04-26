@@ -22,7 +22,16 @@ void setupFirebase(){
 }
   
 void sendFirebaseDatabase(JsonObject& noSensor) {
-  String path = Firebase.push("/noSensor", noSensor);
+    String data="";
+    data.concat("/noSensor/Data");
+    String ano = noSensor["ano"];
+    data.concat(ano);data.concat("-");
+    String mes = noSensor["mes"]; 
+    data.concat(mes);data.concat("-");
+    String dia= noSensor["dia"];
+    data.concat(dia);
+    
+  String path = Firebase.push(data, noSensor);
   bool isFailed = Firebase.failed();
   if(isFailed) {
     Serial.println(F("Erro ao adicionar no Sensor"));

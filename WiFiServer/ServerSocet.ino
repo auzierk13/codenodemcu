@@ -119,8 +119,8 @@ int treatmentRequest(JsonObject& noSensor){
     Serial.println(dateTime);
    
     noSensor["ano"]= getDate('-').toInt();
-    noSensor["mes"]= getDate('-').toInt();
-    noSensor["dia"]= getDate('-').toInt();
+    noSensor["mes"]= getDate('-');
+    noSensor["dia"]= getDate('-');
     noSensor["hora"]= getDate(':').toInt();
     noSensor["minuto"]= getDate(':').toInt();
     noSensor["segundo"]= getDate(':').toInt();;    
