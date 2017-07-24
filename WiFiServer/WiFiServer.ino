@@ -13,7 +13,7 @@
 
 #define FIREBASE_HOST F("checkbaby-338a9.firebaseio.com")
 #define FIREBASE_AUTH "nqB1HAmkwZ6nvMKUMmxpYXFtILcPSrKGyvp3ePH8"
-
+///AT+CWJAP_DEF="NET_2G7A5441","B37A5441"
 const char* ssid = "NET_2G7A5441";
 const char* password = "B37A5441";
 //const char* ssid = "ICOMP_1A";
